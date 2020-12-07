@@ -4,7 +4,8 @@
 #include <string>
 
 namespace Format {
-std::string ElapsedTime(long times);  // TODO: See src/format.cpp
+    std::string PaddedString(std::string original_string, int size, char padding);
+    std::string ElapsedTime(long times);
 };                                    // namespace Format
 
 #endif
