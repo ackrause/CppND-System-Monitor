@@ -106,14 +106,42 @@ long LinuxParser::Jiffies() { return UpTime() * sysconf(_SC_CLK_TCK); }
 // REMOVE: [[maybe_unused]] once you define the function
 long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
 
-// TODO: Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() { return 0; }
+long LinuxParser::ActiveJiffies() {
+  vector<long> cpu_utilization = CpuUtilization();
 
-// TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0; }
+  return cpu_utilization[CPUStates::kUser_] + cpu_utilization[CPUStates::kNice_] +
+         cpu_utilization[CPUStates::kSystem_] + cpu_utilization[CPUStates::kIRQ_] +
+         cpu_utilization[CPUStates::kSoftIRQ_] + cpu_utilization[CPUStates::kSteal_] +
+         cpu_utilization[CPUStates::kGuest_] + cpu_utilization[CPUStates::kGuestNice_];
+}
 
-// TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() { return {}; }
+long LinuxParser::IdleJiffies() {
+  vector<long> cpu_utilization = CpuUtilization();
+
+  return cpu_utilization[CPUStates::kIdle_] + cpu_utilization[CPUStates::kIOwait_];
+}
+
+vector<long> LinuxParser::CpuUtilization() {
+  string line;
+  string key;
+  long token;
+  vector<long> cpu_utilization;
+  std::ifstream filestream(kProcDirectory + kStatFilename);
+  if (filestream.is_open()) {
+    while (std::getline(filestream, line)) {
+      std::istringstream linestream(line);
+      while (linestream >> key) {
+        if (key == "cpu") {
+          while (linestream >> token) {
+            cpu_utilization.push_back(token);
+          }
+        }
+      }
+    }
+  }
+
+  return cpu_utilization;
+}
 
 int LinuxParser::TotalProcesses() {
   string line;
