@@ -25,8 +25,8 @@ vector<Process>& System::Processes() {
     }
 
     std::sort(processes.begin(), processes.end(), std::greater<Process>());
-
     processes_ = processes;
+    
     return processes_;
 }
 
