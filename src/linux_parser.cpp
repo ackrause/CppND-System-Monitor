@@ -215,11 +215,12 @@ string LinuxParser::Ram(int pid) {
       linestream >> key;
       if (key == "VmSize:") {
         linestream >> ram;
+        ram *= kKbToMb;
       }
     }
   }
 
-  return to_string(ram * kKbToMb) + " MB";
+  return to_string(ram);
 }
 
 string LinuxParser::Uid(int pid) {
