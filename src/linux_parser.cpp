@@ -260,21 +260,21 @@ string LinuxParser::User(int pid) {
 }
 
 long LinuxParser::UpTime(int pid) {
-  long uptime;
+  long start_time;
   string line, token;
   std::ifstream stream(kProcDirectory + to_string(pid) + kStatFilename);
   if (stream.is_open()) {
     std::getline(stream, line);
     std::istringstream linestream(line);
 
-    // skip first 21 tokens because uptime is the 22nd
+    // skip first 21 tokens because start_time is the 22nd
     for (int i = 0; i < 21; ++i) {
         linestream >> token;
     }
 
-    linestream >> uptime;
-    uptime /= sysconf(_SC_CLK_TCK);
+    linestream >> start_time;
+    start_time /= sysconf(_SC_CLK_TCK);
   }
 
-  return uptime;
+  return UpTime() - start_time;
 }
