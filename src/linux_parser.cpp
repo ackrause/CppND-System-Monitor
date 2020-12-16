@@ -110,8 +110,8 @@ long LinuxParser::ActiveJiffies(int pid) {
     std::getline(stream, line);
     std::istringstream linestream(line);
 
-    // skip first 12 tokens because user jiffies is the 13th
-    for (int i = 0; i < 12; ++i) {
+    // skip first 13 tokens because user jiffies is the 14th
+    for (int i = 0; i < 13; ++i) {
         linestream >> token;
     }
 
